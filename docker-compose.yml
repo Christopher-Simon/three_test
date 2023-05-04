@@ -1,0 +1,17 @@
+version: '3.7'
+
+services:
+  three:
+    build: .
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./front:/src/project
+      - /src/project/node_modules
+
+volumes:
+  vol_front:
+    driver_opts:
+      type: none
+      o: bind
+      device: ./front

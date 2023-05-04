@@ -32,7 +32,7 @@ const ThreeScene: React.FC = () => {
 
   return (
     <>
-      <canvas ref={canvasRef} />
+      <canvas ref={canvasRef}  />
       <Cube scene={scene.current} />
       <TextDisplay scene={scene.current} />
     </>
