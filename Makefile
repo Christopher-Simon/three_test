@@ -1,6 +1,9 @@
 all : 
 	docker compose up --build
 
+inst-all: all
+	(cd ./front && npm install)
+
 install:
 	(cd ./front && npm install)
 
