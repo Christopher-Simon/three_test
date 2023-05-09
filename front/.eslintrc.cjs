@@ -34,5 +34,8 @@ module.exports = {
         "react/no-unknown-property": 0,
         "@typescript-eslint/no-explicit-any": "error",
         "react/jsx-props-no-spreading": 0,
+        'object-curly-newline': 0,
+        'operator-linebreak': 0,
+        '@typescript-eslint/comma-dangle': 0,
     }
 }
