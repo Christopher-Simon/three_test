@@ -1,8 +1,6 @@
 import { useFrame } from "@react-three/fiber";
 import { useRef, useState } from "react";
-import { Material, Mesh, Color, MeshBasicMaterial } from "three";
-import { useControls } from "leva";
-import { hasColor, hasFlatShading, hasWireframe } from "./MaterialTypeGuard";
+import { Material, Mesh } from "three";
 
 interface PolyhedronProps {
 	name: string;
@@ -18,7 +16,6 @@ export default function Polyhedron({
 	const instanceRef = useRef<Mesh>(null);
 	const [rotate, setRotate] = useState<boolean>(true);
 
-	console.log(name);
 	useFrame((_, delta) => {
 		if (!instanceRef.current) return;
 		if (!rotate) return;
@@ -73,8 +70,8 @@ export default function Polyhedron({
 			onPointerDown={() => {
 				setRotate(!rotate);
 			}}
-			onPointerOver={() => console.log(name)}
-			// onPointerOut={() => setRotate(!rotate)}
+			castShadow
+			receiveShadow
 		>
 			<icosahedronGeometry args={[1, 1]} />
 		</mesh>

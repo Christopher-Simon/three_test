@@ -16,7 +16,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "three": "^0.151.3",
-    "three-orbitcontrols-ts": "^0.1.2"
+    "three-orbitcontrols-ts": "^0.1.2",
+    "three-stdlib": "^2.21.11"
   },
   "devDependencies": {
     "@types/node": "^18.16.0",

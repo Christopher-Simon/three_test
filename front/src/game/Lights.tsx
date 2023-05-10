@@ -1,124 +1,76 @@
-import React, { useRef } from "react";
-import * as THREE from "three";
+import React from "react";
 import { useControls } from "leva";
 
 export default function Lights() {
-	const ambientRef = useRef<THREE.AmbientLight>(null);
-	const pointRef = useRef<THREE.PointLight>(null);
-	const spotRef = useRef<THREE.SpotLight>(null);
-
-	useControls("Ambient Light", {
-		visible: {
-			value: false,
-			onChange: (v) => {
-				if (ambientRef.current) ambientRef.current.visible = v;
-			},
-		},
-		color: {
-			value: "white",
-			onChange: (v) => {
-				if (ambientRef.current) ambientRef.current.color = new THREE.Color(v);
-			},
+	const ambientCtl = useControls("Ambient Light", {
+		visible: false,
+		intensity: {
+			value: 1.0,
+			min: 0,
+			max: 1.0,
+			step: 0.1,
 		},
 	});
 
-	const directionalRef = useRef<THREE.DirectionalLight>(null);
-
-	useControls("Directional Light", {
-		visible: {
-			value: true,
-			onChange: (v: boolean) => {
-				if (directionalRef.current) {
-					directionalRef.current.visible = v;
-				}
-			},
-		},
+	const directionalCtl = useControls("Directional Light", {
+		visible: true,
 		position: {
-			value: { x: 1, y: 1, z: 1 },
-			onChange: (v: THREE.Vector3) => {
-				if (directionalRef.current) {
-					directionalRef.current.position.copy(v);
-				}
-			},
+			x: 3.3,
+			y: 1.0,
+			z: 4.4,
 		},
-		color: {
-			value: "white",
-			onChange: (v: string) => {
-				if (directionalRef.current) {
-					directionalRef.current.color = new THREE.Color(v);
-				}
-			},
-		},
+		castShadow: true,
 	});
 
-	useControls("Point Light", {
-		visible: {
-			value: false,
-			onChange: (v: boolean) => {
-				if (pointRef.current) {
-					pointRef.current.visible = v;
-				}
-			},
-		},
+	const pointCtl = useControls("Point Light", {
+		visible: false,
 		position: {
-			value: {
-				x: 2,
-				y: 0,
-				z: 0,
-			},
-			onChange: (v: THREE.Vector3) => {
-				if (pointRef.current) {
-					pointRef.current.position.copy(v);
-				}
-			},
+			x: 2,
+			y: 0,
+			z: 0,
 		},
-		color: {
-			value: "white",
-			onChange: (v: string) => {
-				if (pointRef.current) {
-					pointRef.current.color = new THREE.Color(v);
-				}
-			},
-		},
+		castShadow: true,
 	});
 
-	useControls("Spot Light", {
-		visible: {
-			value: false,
-			onChange: (v) => {
-				if (spotRef.current) {
-					spotRef.current.visible = v;
-				}
-			},
-		},
+	const spotCtl = useControls("Spot Light", {
+		visible: false,
 		position: {
-			value: {
-				x: 3,
-				y: 2.5,
-				z: 1,
-			},
-			onChange: (v) => {
-				if (spotRef.current) {
-					spotRef.current.position.copy(v);
-				}
-			},
+			x: 3,
+			y: 2.5,
+			z: 1,
 		},
-		color: {
-			value: "white",
-			onChange: (v) => {
-				if (spotRef.current) {
-					spotRef.current.color = new THREE.Color(v);
-				}
-			},
-		},
+		castShadow: true,
 	});
 
 	return (
 		<>
-			<ambientLight ref={ambientRef} />
-			<directionalLight ref={directionalRef} />
-			<pointLight ref={pointRef} />
-			<spotLight ref={spotRef} />
+			<ambientLight
+				visible={ambientCtl.visible}
+				intensity={ambientCtl.intensity}
+			/>
+			<directionalLight
+				visible={directionalCtl.visible}
+				position={[
+					directionalCtl.position.x,
+					directionalCtl.position.y,
+					directionalCtl.position.z,
+				]}
+				castShadow={directionalCtl.castShadow}
+			/>
+			<pointLight
+				visible={pointCtl.visible}
+				position={[
+					pointCtl.position.x,
+					pointCtl.position.y,
+					pointCtl.position.z,
+				]}
+				castShadow={pointCtl.castShadow}
+			/>
+			<spotLight
+				visible={spotCtl.visible}
+				position={[spotCtl.position.x, spotCtl.position.y, spotCtl.position.z]}
+				castShadow={spotCtl.castShadow}
+			/>
 		</>
 	);
 }
