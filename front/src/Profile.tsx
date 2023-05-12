@@ -1,23 +1,27 @@
 import { Html } from "@react-three/drei";
 // import React, { Dispatch } from "react";
 // import { parse } from 'query-string';
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 // import { RefObject } from "react";
 // import { Vector3 } from "three";
 // import { useFrame, extend } from "@react-three/fiber";
 // import * as THREE from "three";
 // import { TextGeometry } from "three/examples/jsm/geometries/TextGeometry";
-import { useThree } from "@react-three/fiber";
 // import { OrbitControls } from "three-stdlib";
 // import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 // export default function Profile({ x, y, z }: { x:number; y:number; z:number; }) {
 
 interface ProfileProps {
-	Board : boolean;
+	Board: boolean;
 	// setBoard: Dispatch<React.SetStateAction<boolean>>;
 }
 
-export default function Profile({ Board } : ProfileProps) {
+interface PlayerProps {
+	id: number;
+	username: string;
+}
+
+export default function Profile({ Board }: ProfileProps) {
 	// const textRef = useRef<HTMLDivElement>(null);
 	// const textRef = useRef<THREE.Mesh>(null);
 	// const textRef = useRef<HTMLDivElement>(null);
@@ -68,13 +72,37 @@ export default function Profile({ Board } : ProfileProps) {
 	// if (camera.position.x > 8 && camera.position.x < 12
 	// 	&& camera.position.y > -1 && camera.position.y < 3
 	// 	&& camera.position.z > 3 && camera.position.z < 7) {
-	const { camera } = useThree();
 	const textRef = useRef<HTMLDivElement>(null);
+	const [player, setPlayer] = useState<PlayerProps | null>(null);
+
+	useEffect(() => {
+		const requestOptions = {
+			method: "POST",
+			headers: { "Content-Type": "application/json" },
+			body: JSON.stringify({
+				query: `
+						query {
+							user(id : 1) {
+								firstname
+								id
+							}
+						}
+						`,
+			}),
+		};
+		fetch("http://e1r4p5:5000/v1/graphql", requestOptions)
+			.then((res) => res.json())
+			.then((data) => {
+				setPlayer({
+					id: data.data.user.id,
+					username: data.data.user.firstname,
+				});
+			});
+	}, []);
 	if (!Board) {
-		return (
-			<Html />
-		);
+		return <Html />;
 	}
+
 	return (
 		<Html
 			// ref={textRef}
@@ -104,34 +132,14 @@ export default function Profile({ Board } : ProfileProps) {
 				>
 					profile2
 				</text> */}
-				<p ref={textRef} style={{ fontSize: "150%" }}>Profile</p>
+				<p
+					ref={textRef}
+					style={{ fontSize: "150%" }}
+				>
+					Profile name : {player?.username}
+				</p>
 			</div>
 		</Html>
-		// <>
-		// 	{/* <mesh ref={textRef} position={[7, 1, 5]}>
-		// 		<textGeometry args={["test", { size: 5, height: 10 }]} />
-		// 		<meshBasicMaterial attach="material" color="white" />
-		// 	</mesh> */}
-		// 	<Html
-		// 		// ref={textRef}
-		// 		occlude
-		// 		position={[7, 1, 5]}
-		// 		rotation={[0, Math.PI / 2, 0]}
-		// 		transform
-		// 	>
-		// 		<div
-		// 			// ref={textRef}
-		// 			style={{
-		// 				backgroundColor: "grey",
-		// 				borderRadius: "5px",
-		// 				padding: "10px",
-		// 				textAlign: "center",
-		// 			}}
-		// 		>
-		// 			<p style={{ fontSize: "20px" }}>Profile</p>
-		// 		</div>
-		// 	</Html>
-		// </>
 	);
 	// return (
 	// 	<Html>empty</Html>

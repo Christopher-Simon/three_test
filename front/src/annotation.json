@@ -14,7 +14,7 @@
       }
     },
     {
-      "title": "Bath",
+      "title": "Leaderboard",
 	  "description": "<p>Leaderboard</p>",
       "camPos": {
         "x": 7,
@@ -28,7 +28,7 @@
       }
     },
 	{
-		"title": "Bath",
+		"title": "Locker",
 		"description": "<p>Locker</p>",
 		"camPos": {
 		  "x": 7,
