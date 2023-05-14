@@ -1,5 +1,6 @@
 import React, { RefObject, useRef, useState, Dispatch } from "react";
 import {
+	// BasicShadowMap,
 	// MeshBasicMaterial,
 	// MeshNormalMaterial,
 	// MeshPhongMaterial,
@@ -7,9 +8,12 @@ import {
 	// TextureLoader,
 	Vector3,
 } from "three";
+import * as THREE from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls, Stats, useTexture } from "@react-three/drei";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
+// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 // import Polyhedron from "./game/Polyhedron";
 // import Lights from "./game/Lights";
@@ -18,6 +22,8 @@ import Profile from "./Profile";
 import Buttons from "./Buttons";
 import Game from "./Game";
 
+import metal from "./download.jpg";
+
 // interface Peoplecamtype {
 // 	// position: Vector3;
 // 	// camera: Vector3;
@@ -25,13 +31,32 @@ import Game from "./Game";
 // 	setMyInt(value: number): void;
 // }
 
+function Light() {
+	// Create a PointLight and turn on shadows for the light
+	const light = new THREE.DirectionalLight(0xffffff, 1);
+	light.position.set(100, 100, 100);
+	light.castShadow = true; // default false
+	// Set up shadow properties for the light
+	light.shadow.mapSize.width = 5120; // default
+	light.shadow.mapSize.height = 5120; // default
+	light.shadow.camera.near = 0.1; // default
+	light.shadow.camera.far = 500; // default
+	light.shadow.camera.top = -100; // default
+	light.shadow.camera.right = 100; // default
+	light.shadow.camera.left = -100; // default
+	light.shadow.camera.bottom = 100; // default
+	light.intensity = 50;
+	return <primitive object={light} />;
+}
+
 function Floor() {
 	return (
 		<mesh
 			rotation-x={-Math.PI / 2}
 			receiveShadow
 		>
-			<circleGeometry args={[10]} />
+			<circleGeometry args={[1500]} />
+			{/* <planeGeometry args={[2500, 1500]} /> */}
 			<meshStandardMaterial />
 		</mesh>
 	);
@@ -42,12 +67,14 @@ function Animate({
 	orbitRef,
 	setBoard,
 	setLerping,
-	// canvasRef,
-}: {
+	setMode,
+}: // canvasRef,
+{
 	lerping: number;
 	setBoard: Dispatch<React.SetStateAction<boolean>>;
 	orbitRef: RefObject<OrbitControlsImpl>;
 	setLerping: Dispatch<React.SetStateAction<number>>;
+	setMode: Dispatch<React.SetStateAction<number>>;
 	// canvasRef: HTMLCanvasElement;
 }) {
 	// const { gl } = useThree<THREE.WebGLRenderer>();
@@ -72,6 +99,7 @@ function Animate({
 		setTimeout(() => {
 			console.log("Hello, world!");
 			setLerping(0);
+			setMode(0);
 		}, 2000);
 	};
 	return useFrame(({ camera }, delta) => {
@@ -81,6 +109,7 @@ function Animate({
 		const vec = new Vector3(peoplepos[0], peoplepos[1], peoplepos[2]);
 		camera.position.lerp(vec, delta * 1.5);
 		setBoard(true);
+		setMode(lerping);
 		if (lerping === 4) {
 			handleClick();
 		}
@@ -97,12 +126,36 @@ function Animate({
 }
 
 function App() {
-	// const texture = useLoader(TextureLoader, "./img/grid.png");
-	const stade = useLoader(OBJLoader, "stade.obj");
+	// const texture = useLoader(TextureLoader, "../public/stade.mtl");
+	const materials = useLoader(MTLLoader, "../public/stade.mtl");
+	// const texture = useTexture("../public/stade.mtl");
+	// const base = new THREE.TextureLoader().load(metal);
+	materials.loadTexture;
+	const stade = useLoader(OBJLoader, "stade.obj", (object) => {
+		object.setMaterials(materials);
+		console.log(object);
+	});
+	// const stade = useLoader(GLTFLoader, "../public/stade.gltf");
+	// stade.materials =
 	// const table = useLoader(OBJLoader, "/table.obj");
+	// const stade = useLoader(OBJLoader, "stade.obj", (loader) => {
+	// 	materials.preload();
+	// 	loader.setMaterials(materials);
+	// });
+	// const { nodes, materials } = useGraph(stade);
+
 	const [lerping, setLerping] = useState<number>(0);
 	const [board, setboard] = useState<boolean>(false);
+	const [mode, setMode] = useState<number>(0);
+	// 0 = accueil
+	// 1 = jeu
+	// 2 = autre
 	const orbitRef = useRef<OrbitControlsImpl>(null);
+	// const { camera, gl } = useThree();
+	// useFrame(() => {
+	// 	camera.position.set(0, 0, 5);
+	// 	gl.render(stade, camera);
+	// });
 
 	return (
 		<>
@@ -111,79 +164,64 @@ function App() {
 				// frameloop="demand"
 				shadows
 				camera={{ position: [15, 15, -15] }}
-				// onPointerDown={() => setLerping(0)}
-				// onWheel={() => setLerping(0)}
+				onPointerDown={() => setLerping(0)}
+				onWheel={() => setLerping(0)}
 			>
 				<Annotation
-					lerping={lerping}
+					mode={mode}
 					setLerping={setLerping}
 				/>
-				<ambientLight intensity={0.2} />
+				{/* <ambientLight intensity={0.2} /> */}
 				<boxGeometry />
-				<directionalLight
-					position={[25, 5, -14.4]}
+				{/* <directionalLight
+					position={[0, 100, 0]}
 					castShadow
-					// rotation={[Math.PI / 2, 0, 0]}
-				/>
-				<mesh>
+				/> */}
+				<Light />
+				<mesh
+					receiveShadow
+					castShadow
+				>
 					<primitive
 						object={stade}
-						scale={0.2}
+						scale={1}
 						position={[0, 0, 0]}
 						rotation={[0, Math.PI / 2, 0]}
 						children-0-castShadow
+						children-0-receiveShadow
+						// map={materials}
 					/>
+					{/* <meshBasicMaterial
+						attach="material"
+						color="lightblue"
+						transparent
+					/> */}
 				</mesh>
-				{/* <Polyhedron
-					name="meshBasicMaterial"
-					position={[-3, 1, -5]}
-					material={new MeshBasicMaterial({ map: texture })}
-				/>
-				<Polyhedron
-					name="meshNormalMaterial"
-					position={[-1, 1, -5]}
-					material={new MeshNormalMaterial({ flatShading: true })}
-				/>
-				<Polyhedron
-					name="meshPhongMaterial"
-					position={[1, 1, -5]}
-					material={
-						new MeshPhongMaterial({
-							color: "lime",
-							map: texture,
-							flatShading: true,
-						})
-					}
-				/>
-				<Polyhedron
-					name="meshStandardMaterial"
-					position={[3, 1, -5]}
-					material={
-						new MeshStandardMaterial({
-							color: "red",
-							map: texture,
-							flatShading: true,
-						})
-					}
-				/> */}
+				<Game mode={mode} />
 				<OrbitControls ref={orbitRef} />
 				<Animate
 					lerping={lerping}
 					orbitRef={orbitRef}
 					setBoard={setboard}
 					setLerping={setLerping}
+					setMode={setMode}
 					// canvasRef={canvasRef}
 				/>
-				<Game />
-				<Profile Board={board} />
 				<Floor />
-				<axesHelper args={[5]} />
-				<gridHelper />
+				{/* <ContactShadows
+					scale={150}
+					position={[0.33, -0.33, 0.33]}
+					opacity={1.5}
+				/> */}
+				<Profile Board={board} />
+				<axesHelper args={[10]} />
+				<gridHelper args={[2500, 1500]} />
 				<Stats />
 			</Canvas>
 			<Buttons
-				lerping={lerping}
+				mode={mode}
 				setLerping={setLerping}
+				// setMode={setMode}
 			/>
 		</>
 	);

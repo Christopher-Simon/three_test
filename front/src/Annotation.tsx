@@ -1,7 +1,7 @@
 import React, { Dispatch } from "react";
 // import annotation from "./annotation.json";
 import { Html } from "@react-three/drei";
-import annotations from "../public/annotation.json";
+import annotations from "./annotation.json";
 import "./Annotation.css";
 // import { Vector3 } from "@react-three/fiber";
 // import { Peoplecamtype } from "./App" ;
@@ -13,7 +13,7 @@ import "./Annotation.css";
 // }
 
 interface AnnotationProps {
-	lerping: number;
+	mode: number;
 	setLerping: Dispatch<React.SetStateAction<number>>;
 }
 
@@ -26,7 +26,7 @@ interface AnnotationProps {
 // 	people_cam.camera.z = 5;
 // }
 
-export default function Annotation({ lerping, setLerping }: AnnotationProps) {
+export default function Annotation({ mode, setLerping }: AnnotationProps) {
 	// useFrame((_, delta) =>
 
 	// function handlerclick(i: number) {
@@ -34,7 +34,7 @@ export default function Annotation({ lerping, setLerping }: AnnotationProps) {
 	// 	console.log(clic);
 	// 	setLerping(true);
 	// }
-	if (lerping === 0) {
+	if (mode === 0) { // lerping === 0
 		return (
 			<>
 				{annotations.map((a, i) => (

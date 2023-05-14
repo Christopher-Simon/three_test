@@ -108,7 +108,7 @@ export default function Profile({ Board }: ProfileProps) {
 			// ref={textRef}
 			// ref={camera}
 			occlude
-			position={[7, 1, 0]}
+			position={[15, 1, 0]}
 			rotation={[0, Math.PI / 2, 0]}
 			transform
 		>
@@ -117,7 +117,7 @@ export default function Profile({ Board }: ProfileProps) {
 				style={{
 					backgroundColor: "grey",
 					borderRadius: "5px",
-					padding: "10px",
+					padding: "100px",
 					textAlign: "center",
 					pointerEvents: "none",
 				}}
@@ -134,7 +134,7 @@ export default function Profile({ Board }: ProfileProps) {
 				</text> */}
 				<p
 					ref={textRef}
-					style={{ fontSize: "150%" }}
+					style={{ fontSize: "100px" }}
 				>
 					Profile name : {player?.username}
 				</p>

@@ -3,12 +3,13 @@ import React, { Dispatch } from "react";
 
 // import { Html } from "@react-three/drei";
 interface ButtonProps {
-	lerping: number;
+	mode: number;
 	setLerping: Dispatch<React.SetStateAction<number>>;
+	// setMode: Dispatch<React.SetStateAction<number>>;
 }
 
-export default function Buttons({ lerping, setLerping } : ButtonProps) {
-	if (lerping === 2 || lerping === 3) {
+export default function Buttons({ mode, setLerping, } : ButtonProps) {
+	if (mode === 2 || mode === 3) {
 		return (
 			<button
 				type="button"
@@ -18,7 +19,7 @@ export default function Buttons({ lerping, setLerping } : ButtonProps) {
 			</button>
 		);
 	}
-	if (lerping === 1) {
+	if (mode === 1) {
 		return (
 			<button
 				type="button"
