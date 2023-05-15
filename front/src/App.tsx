@@ -10,7 +10,7 @@ import {
 } from "three";
 import * as THREE from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, Stats, useTexture } from "@react-three/drei";
+import { OrbitControls, Stats } from "@react-three/drei";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -22,7 +22,7 @@ import Profile from "./Profile";
 import Buttons from "./Buttons";
 import Game from "./Game";
 
-import metal from "./download.jpg";
+// import metal from "./download.jpg";
 
 // interface Peoplecamtype {
 // 	// position: Vector3;
@@ -34,8 +34,9 @@ import metal from "./download.jpg";
 function Light() {
 	// Create a PointLight and turn on shadows for the light
 	const light = new THREE.DirectionalLight(0xffffff, 1);
-	light.position.set(100, 100, 100);
+	light.position.set(150, 350, 150);
 	light.castShadow = true; // default false
+	light.shadow.blurSamples = 4;
 	// Set up shadow properties for the light
 	light.shadow.mapSize.width = 5120; // default
 	light.shadow.mapSize.height = 5120; // default
@@ -45,7 +46,7 @@ function Light() {
 	light.shadow.camera.right = 100; // default
 	light.shadow.camera.left = -100; // default
 	light.shadow.camera.bottom = 100; // default
-	light.intensity = 50;
+	light.intensity = 5;
 	return <primitive object={light} />;
 }
 
@@ -54,8 +55,9 @@ function Floor() {
 		<mesh
 			rotation-x={-Math.PI / 2}
 			receiveShadow
+			position={[0, 0, 0]}
 		>
-			<circleGeometry args={[1500]} />
+			<circleGeometry args={[150, 100, 100]} />
 			{/* <planeGeometry args={[2500, 1500]} /> */}
 			<meshStandardMaterial />
 		</mesh>
@@ -83,16 +85,16 @@ function Animate({
 	let peoplepos: [number, number, number] = [0, 0, 0];
 	let peopleview: [number, number, number] = [0, 0, 0];
 	if (lerping === 2) {
-		peoplepos = [10, 1, 0];
+		peoplepos = [50, 1, 0];
 		peopleview = [0, 1, 0];
 	} else if (lerping === 1) {
-		peoplepos = [0, 3, 5];
+		peoplepos = [0, 7, 15];
 		peopleview = [0, 0, 0];
 	} else if (lerping === 3) {
 		peoplepos = [-10, 1, 0];
 		peopleview = [0, 1, 0];
 	} else if (lerping === 4) {
-		peoplepos = [15, 15, -15];
+		peoplepos = [55, 55, -55];
 		peopleview = [0, 0, 0];
 	}
 	const handleClick = () => {
@@ -130,7 +132,7 @@ function App() {
 	const materials = useLoader(MTLLoader, "../public/stade.mtl");
 	// const texture = useTexture("../public/stade.mtl");
 	// const base = new THREE.TextureLoader().load(metal);
-	materials.loadTexture;
+	// materials.loadTexture;
 	const stade = useLoader(OBJLoader, "stade.obj", (object) => {
 		object.setMaterials(materials);
 		console.log(object);
@@ -163,7 +165,7 @@ function App() {
 				// ref={canvasRef}
 				// frameloop="demand"
 				shadows
-				camera={{ position: [15, 15, -15] }}
+				camera={{ position: [55, 55, -55] }}
 				onPointerDown={() => setLerping(0)}
 				onWheel={() => setLerping(0)}
 			>
@@ -171,7 +173,7 @@ function App() {
 					mode={mode}
 					setLerping={setLerping}
 				/>
-				{/* <ambientLight intensity={0.2} /> */}
+				<ambientLight intensity={0.5} />
 				<boxGeometry />
 				{/* <directionalLight
 					position={[0, 100, 0]}
@@ -215,7 +217,7 @@ function App() {
 				/> */}
 				<Profile Board={board} />
 				<axesHelper args={[10]} />
-				<gridHelper args={[2500, 1500]} />
+				{/* <gridHelper args={[2500, 1500]} /> */}
 				<Stats />
 			</Canvas>
 			<Buttons

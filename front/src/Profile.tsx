@@ -108,7 +108,7 @@ export default function Profile({ Board }: ProfileProps) {
 			// ref={textRef}
 			// ref={camera}
 			occlude
-			position={[15, 1, 0]}
+			position={[35, 10, 0]}
 			rotation={[0, Math.PI / 2, 0]}
 			transform
 		>

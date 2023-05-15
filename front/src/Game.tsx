@@ -5,16 +5,31 @@ import { useRef } from "react";
 // 	MeshStandardMaterial,
 // } from "three";
 
+function Racket() {
+	const meshRef = useRef<THREE.Mesh>(null);
+
+	return (
+		<mesh
+			ref={meshRef}
+			position={[-10, 0, 0]}
+			onPointerDown={(e) => console.log(e.object.name)}
+		>
+			<boxGeometry args={[10, 10, 10]} />
+			<meshBasicMaterial color="red" />
+		</mesh>
+	);
+}
+
 export default function Game({ mode }: { mode: number }) {
 	const meshRef = useRef<THREE.Mesh>(null);
 	let dir = 1;
 	useFrame(() => {
 		// const time = clock.getElapsedTime();
 		if (meshRef.current) {
-			if (meshRef.current.position.x + 0.1 >= 3) {
+			if (meshRef.current.position.x + 0.1 >= 17) {
 				dir *= -1;
 				meshRef.current.position.x += 0.1 * dir;
-			} else if (meshRef.current.position.x - 0.1 <= -3) {
+			} else if (meshRef.current.position.x - 0.1 <= -17) {
 				dir *= -1;
 				meshRef.current.position.x += 0.1 * dir;
 			} else {
@@ -25,10 +40,7 @@ export default function Game({ mode }: { mode: number }) {
 		//   meshRef.current.rotation.z = Math.sin(time * 4) * Math.PI / 4; // Rotate around the z-axis
 	});
 	if (mode !== 1) {
-		return (
-			<>
-			</>
-		);
+		return <mesh />;
 	}
 	return (
 		<mesh
@@ -36,18 +48,19 @@ export default function Game({ mode }: { mode: number }) {
 			receiveShadow
 		>
 			<mesh
-				position={[3, 0.7, 0]}
+				position={[17, 2, 0]}
 				castShadow
 				receiveShadow
 			>
 				<boxGeometry
 					attach="geometry"
-					args={[0.2, 0.7, 12]}
+					args={[0.5, 0.5, 16]}
 				/>
 			</mesh>
+			<Racket />
 			<mesh
 				ref={meshRef}
-				position={[0, 0.5, 0]}
+				position={[0, 2, 0]}
 				receiveShadow
 				castShadow
 				// name="meshStandardMaterial"
@@ -60,26 +73,26 @@ export default function Game({ mode }: { mode: number }) {
 				// }
 			>
 				<Sphere
-					args={[2, 30, 30]}
+					args={[1, 30, 30]}
 					receiveShadow
 					castShadow
 				/>
 			</mesh>
 			<mesh
-				position={[-3, 0.7, 0]}
+				position={[-17, 2, 0]}
 				castShadow
 				receiveShadow
 			>
 				<boxGeometry
 					attach="geometry"
-					args={[0.2, 0.7, 12]}
+					args={[0.5, 0.5, 16]}
 				/>
-				<Sphere
+				{/* <Sphere
 					position={[0, 0.5, 0]}
 					args={[0.2, 30, 30]}
 					receiveShadow
 					castShadow
-				/>
+				/> */}
 			</mesh>
 		</mesh>
 	);
