@@ -122,16 +122,6 @@ export default function Profile({ Board }: ProfileProps) {
 					pointerEvents: "none",
 				}}
 			>
-				{/* <text
-					x="12"
-					y="22"
-					fill="white"
-					fontSize={17}
-					fontFamily="monospace"
-					style={{ pointerEvents: "none" }}
-				>
-					profile2
-				</text> */}
 				<p
 					ref={textRef}
 					style={{ fontSize: "100px" }}

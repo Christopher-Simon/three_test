@@ -10,7 +10,7 @@ import {
 } from "three";
 import * as THREE from "three";
 import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, Stats } from "@react-three/drei";
+import { OrbitControls, Stats, Sky } from "@react-three/drei";
 import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
 import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 // import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -88,7 +88,7 @@ function Animate({
 		peoplepos = [50, 1, 0];
 		peopleview = [0, 1, 0];
 	} else if (lerping === 1) {
-		peoplepos = [0, 7, 15];
+		peoplepos = [0, 15, 15];
 		peopleview = [0, 0, 0];
 	} else if (lerping === 3) {
 		peoplepos = [-10, 1, 0];
@@ -179,6 +179,7 @@ function App() {
 					castShadow
 				/> */}
 				<Light />
+				{/* <Sky distance={4500} sunPosition={[0, 1000, 0]} inclination={133} azimuth={180} /> */}
 				<mesh
 					receiveShadow
 					castShadow
