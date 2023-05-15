@@ -215,8 +215,20 @@ function App() {
 					opacity={1.5}
 				/> */}
 				<Profile Board={board} />
-				<axesHelper args={[10]} />
-				{/* <gridHelper args={[2500, 1500]} /> */}
+				<axesHelper
+					args={[10]}
+					position={[0, 1.5, 0]}
+				/>
+				<gridHelper
+					args={[30, 6]}
+					position={[0, 1.2, 0]}
+				/>
+				<mesh position={[1, 2, 1]}>
+					<boxGeometry
+						args={[1, 1, 1]}
+					/>
+					<meshBasicMaterial color="green" />
+				</mesh>
 				<Stats />
 			</Canvas>
 			<Buttons
