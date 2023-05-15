@@ -1,20 +1,47 @@
 import { useFrame } from "@react-three/fiber";
 import { Sphere } from "@react-three/drei";
-import { useRef } from "react";
+import { useEffect, useRef } from "react";
 // import {
 // 	MeshStandardMaterial,
 // } from "three";
 
+function useKeyboard() {
+	const keyMap = useRef<any>({});
+
+	useEffect(() => {
+		const onDocumentKey = (e: any) => {
+			keyMap.current[e.code] = e.type === "keydown";
+		};
+		document.addEventListener("keydown", onDocumentKey);
+		document.addEventListener("keyup", onDocumentKey);
+		return () => {
+			document.removeEventListener("keydown", onDocumentKey);
+			document.removeEventListener("keyup", onDocumentKey);
+		};
+	});
+
+	return keyMap.current;
+}
+
 function Racket() {
 	const meshRef = useRef<THREE.Mesh>(null);
+	const keyMap = useKeyboard();
+
+	useFrame((_, delta) => {
+		if (!meshRef.current) return;
+		// if (keyMap.KeyA) meshRef.current.position.x -= 10 * delta;
+		// if (keyMap.KeyD) meshRef.current.position.x += 10 * delta;
+		if (keyMap.KeyS && meshRef.current.position.z > -5) meshRef.current.position.z -= 10 * delta;
+		if (keyMap.KeyW && meshRef.current.position.z < 5) meshRef.current.position.z += 10 * delta;
+	});
 
 	return (
 		<mesh
 			ref={meshRef}
-			position={[-10, 0, 0]}
+			position={[-15, 2, 0]}
 			onPointerDown={(e) => console.log(e.object.name)}
 		>
-			<boxGeometry args={[10, 10, 10]} />
+			<boxGeometry args={[1, 1, 5]} />
 			<meshBasicMaterial color="red" />
 		</mesh>
 	);

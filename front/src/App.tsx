@@ -99,7 +99,6 @@ function Animate({
 	}
 	const handleClick = () => {
 		setTimeout(() => {
-			console.log("Hello, world!");
 			setLerping(0);
 			setMode(0);
 		}, 2000);
