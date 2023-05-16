@@ -1,0 +1,17 @@
+pour physics : 
+
+// import { Api, Physics, useBox } from "@react-three/cannon";
+
+	// const gravity = useBox<React.Ref<BoxGeometry>>(null);
+	// const [ref, api] = useBox<>(() => ({ mass: 1 }));
+	// const [ref, api] = useBox<Api>(() => ({ mass: 1 }))
+
+			{/* <mesh
+				receiveShadow
+				position={[0, 1, 0]}
+				rotation={[-Math.PI / 2, 0, 0]}
+				// ref={ref}
+			>
+				<planeBufferGeometry args={[20, 20]} />
+				<meshBasicMaterial color="#DD7233" />
+			</mesh> */}

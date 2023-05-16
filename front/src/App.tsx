@@ -199,7 +199,7 @@ function App() {
 						transparent
 					/> */}
 				</mesh>
-				<Game mode={mode} />
+				{mode === 1 && <Game />}
 				<OrbitControls ref={orbitRef} />
 				<Animate
 					lerping={lerping}
@@ -225,9 +225,7 @@ function App() {
 					position={[0, 1.2, 0]}
 				/>
 				<mesh position={[1, 2, 1]}>
-					<boxGeometry
-						args={[1, 1, 1]}
-					/>
+					<boxGeometry args={[1, 1, 1]} />
 					<meshBasicMaterial color="green" />
 				</mesh>
 				<Stats />
