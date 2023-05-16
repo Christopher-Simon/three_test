@@ -99,8 +99,8 @@ function Animate({
 	}
 	const handleClick = () => {
 		setTimeout(() => {
-			setLerping(0);
 			setMode(0);
+			setLerping(0);
 		}, 2000);
 	};
 	return useFrame(({ camera }, delta) => {
