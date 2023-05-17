@@ -6,77 +6,66 @@ import "./Annotation.css";
 // import { Vector3 } from "@react-three/fiber";
 // import { Peoplecamtype } from "./App" ;
 
-// interface Peoplecamtype {
-// 	// position: Vector3;
-// 	// camera: Vector3;
-// 	clic : number;
-// }
-
 interface AnnotationProps {
-	mode: number;
 	setLerping: Dispatch<React.SetStateAction<number>>;
 }
 
-// function goto({ people_cam } : {people_cam:people_camtype; }) {
-// 	people_cam.position.x = 10;
-// 	people_cam.position.y = 1;
-// 	people_cam.position.z = 5;
-// 	people_cam.camera.x = 0;
-// 	people_cam.camera.y = 1;
-// 	people_cam.camera.z = 5;
-// }
-
-export default function Annotation({ mode, setLerping }: AnnotationProps) {
+export default function Annotation({ setLerping }: AnnotationProps) {
 	// useFrame((_, delta) =>
-
-	// function handlerclick(i: number) {
-	// 	clic = i;
-	// 	console.log(clic);
-	// 	setLerping(true);
-	// }
-	if (mode === 0) { // lerping === 0
-		return (
-			<>
-				{annotations.map((a, i) => (
-					<Html key={1} position={[a.lookAt.x, a.lookAt.y, a.lookAt.z]}>
-						<div className="button_all">
-							<svg
-								height="34"
-								width="34"
-								className="annotation"
-								transform="translate(-16 -16)"
-								style={{ cursor: "pointer" }}
+	const handleClick = (title: string, i: number) => {
+		document.location = `http://localhost:3000/#${title}`;
+		setLerping(i + 1);
+		console.log(i + 1);
+		console.log(title);
+	};
+	return (
+		<>
+			{annotations.map((a, i) => (
+				<Html
+					key={1}
+					position={[a.lookAt.x, a.lookAt.y, a.lookAt.z]}
+				>
+					<div className="button_all">
+						<svg
+							height="34"
+							width="34"
+							className="annotation"
+							transform="translate(-16 -16)"
+							style={{ cursor: "pointer" }}
+						>
+							<circle
+								cx="17"
+								cy="17"
+								r="16"
+								// stroke="white"
+								strokeWidth="2"
+								fill="rgba(0,0,0,.66)"
+								// onClick={() => setLerping(true)}
+								onClick={() => handleClick(a.title, i)} // ; document.location = "http://localhost:3000?toto"; }}
+							/>
+							<text
+								x="12"
+								y="22"
+								fill="white"
+								fontSize={17}
+								fontFamily="monospace"
+								style={{ pointerEvents: "none" }}
 							>
-								<circle
-									cx="17"
-									cy="17"
-									r="16"
-									// stroke="white"
-									strokeWidth="2"
-									fill="rgba(0,0,0,.66)"
-									// onClick={() => setLerping(true)}
-									onClick={() => setLerping(i + 1)} // ; document.location = "http://localhost:3000?toto"; }}
-								/>
-								<text
-									x="12"
-									y="22"
-									fill="white"
-									fontSize={17}
-									fontFamily="monospace"
-									style={{ pointerEvents: "none" }}
-								>
-									{i + 1}
-								</text>
-							</svg>
-							{a.description && (
-								<div id="desc_" className="annotationDescription" dangerouslySetInnerHTML={{ __html: a.description }} />
-							)}
-						</div>
-					</Html>
-				))}
-			</>
-		);
-	}
+								{i + 1}
+							</text>
+						</svg>
+						{a.description && (
+							<div
+								id="desc_"
+								className="annotationDescription"
+								dangerouslySetInnerHTML={{ __html: a.description }}
+							/>
+						)}
+					</div>
+				</Html>
+			))}
+		</>
+	);
 	// if (lerping === 2 || lerping === 3) {
 	// 	return (
 	// 		<Html position={[0, -3, 0]}>
@@ -86,11 +75,4 @@ export default function Annotation({ mode, setLerping }: AnnotationProps) {
 	// 		</Html>
 	// 	);
 	// }
-	return (
-		<Html>
-			<div>
-				bidule
-			</div>
-		</Html>
-	);
 }

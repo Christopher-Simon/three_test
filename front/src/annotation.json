@@ -1,6 +1,6 @@
 [
     {
-      "title": "Play",
+      "title": "game",
       "description": "<p>Play</p>",
       "camPos": {
         "x": 7,
@@ -14,7 +14,7 @@
       }
     },
     {
-      "title": "Leaderboard",
+      "title": "leaderboard",
 	  "description": "<p>Leaderboard</p>",
       "camPos": {
         "x": 7,
@@ -28,7 +28,7 @@
       }
     },
 	{
-		"title": "Locker",
+		"title": "profile",
 		"description": "<p>Locker</p>",
 		"camPos": {
 		  "x": 7,

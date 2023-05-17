@@ -22,12 +22,68 @@ function useKeyboard() {
 	return keyMap.current;
 }
 
-// function HitRack({
-// 	RackRef,
-// 	BallRef,
-// }: {
-// 	RackRef: React.RefObject<Mesh<BufferGeometry, Material | Material[]>>;
-// }) {}
+function HitRack(
+	RackRef: React.RefObject<Mesh<BufferGeometry, Material | Material[]>>,
+	BallX: number,
+	setBallX: Dispatch<React.SetStateAction<number>>,
+	BallZ: number,
+	setBallZ: Dispatch<React.SetStateAction<number>>,
+	incrz: number,
+	setincrz: Dispatch<React.SetStateAction<number>>,
+	dir: number,
+	setdir: Dispatch<React.SetStateAction<number>>,
+	delta: number
+) {
+	const speed = 25;
+	const rayon = 1;
+	if (!RackRef.current) return;
+	if (
+		BallZ <= RackRef.current.position.z + 5 / 2 &&
+		BallZ >= RackRef.current.position.z
+	) {
+		setBallX(BallX + speed * -dir * delta);
+		setdir(-dir);
+		setincrz(Math.abs(BallZ - RackRef.current.position.z));
+		setBallZ(BallZ + speed * incrz * delta);
+	} else if (
+		BallZ >= RackRef.current.position.z - 5 / 2 &&
+		BallZ < RackRef.current.position.z
+	) {
+		setBallX(BallX + speed * -dir * delta);
+		setdir(-dir);
+		setincrz(-Math.abs(RackRef.current.position.z - BallZ));
+		setBallZ(BallZ + speed * incrz * delta);
+	} else if (
+		Math.abs(BallZ - (RackRef.current.position.z + 5 / 2)) < rayon ||
+		Math.abs(BallZ - (RackRef.current.position.z - 5 / 2)) < rayon
+	) {
+		if (
+			(RackRef.current.position.z - 5 / 2 - BallZ) ** 2 +
+				(RackRef.current.position.x + 0.5 - BallX) ** 2 <=
+			1
+		) {
+			setBallX(BallX + speed * -dir * delta);
+			setdir(-dir);
+			setincrz(-Math.abs(RackRef.current.position.z - BallZ));
+			setBallZ(BallZ + speed * incrz * delta);
+		} else if (
+			(RackRef.current.position.z + 5 / 2 - BallZ) ** 2 +
+				(RackRef.current.position.x + 0.5 - BallX) ** 2 <=
+			1
+		) {
+			setBallX(BallX + speed * -dir * delta);
+			setdir(-dir);
+			setincrz(Math.abs(BallZ - RackRef.current.position.z));
+			setBallZ(BallZ + speed * incrz * delta);
+		} else {
+			setBallX(BallX + speed * dir * delta);
+			setBallZ(BallZ + speed * incrz * delta);
+		}
+	} else {
+		setBallX(BallX + speed * dir * delta);
+		setBallZ(BallZ + speed * incrz * delta);
+	}
+}
 
 function Ball({
 	BallRef,
@@ -43,163 +99,69 @@ function Ball({
 	// setGameMode: Dispatch<React.SetStateAction<number>>;
 }) {
 	const ref = BallRef;
-	let dir = 1;
+	const [dir, setdir] = useState<number>(1);
 	const rayon = 1;
-	const speed = 0.3;
-	let incrz = 0;
-	useFrame(() => {
-		if (!ref.current) return;
-		if (!Rack1Ref.current) return;
-		if (!Rack2Ref.current) return;
-		if (GameMode === 0 || GameMode === 1) return;
+	const speed = 25;
+	const [incrz, setincrz] = useState<number>(0);
+	const [BallX, setBallX] = useState<number>(0);
+	const [BallZ, setBallZ] = useState<number>(0);
+	useFrame((_, delta) => {
+		// const delta = 1;
 		if (
-			ref.current.position.x + rayon + 0.1 >= 17 ||
-			ref.current.position.x - rayon - 0.1 <= -17
+			!ref.current ||
+			!Rack1Ref.current ||
+			!Rack2Ref.current ||
+			GameMode === 0 ||
+			GameMode === 1
 		) {
-			dir *= -1;
-			incrz = 0;
-			ref.current.position.x = 0;
-			ref.current.position.z = 0;
-			// setTimeout(() => {
-			// 	if (!ref.current) return;
-			// 	dir *= -1;
-			// 	incrz = 0;
-			// 	ref.current.position.x = 0;
-			// 	ref.current.position.z = 0;
-			// }, 2000);
-			// } else {
-			// 	ref.current.position.x += speed * dir;
-			// ref.current.position.z = ref.current.position.z;
-		} else if (
-			ref.current.position.z - rayon - 0.25 < -10 ||
-			ref.current.position.z + rayon + 0.25 > 10
-		) {
-			// rebond sur les cotes
-			incrz *= -1;
-			ref.current.position.z += incrz;
-			ref.current.position.x += speed * dir;
-		} else if (ref.current.position.x + rayon + 0.5 - 0.0001 > 15) {
-			if (
-				ref.current.position.z <= Rack2Ref.current.position.z + 5 / 2 &&
-				ref.current.position.z >= Rack2Ref.current.position.z
-			) {
-				dir *= -1;
-				ref.current.position.x += speed * dir;
-				incrz = Math.abs(ref.current.position.z - Rack2Ref.current.position.z);
-				ref.current.position.z += speed * incrz;
-			} else if (
-				ref.current.position.z >= Rack2Ref.current.position.z - 5 / 2 &&
-				ref.current.position.z < Rack2Ref.current.position.z
-			) {
-				dir *= -1;
-				ref.current.position.x += speed * dir;
-				incrz = -Math.abs(Rack2Ref.current.position.z - ref.current.position.z);
-				ref.current.position.z += speed * incrz;
-			} else if (
-				Math.abs(
-					ref.current.position.z - (Rack2Ref.current.position.z + 5 / 2)
-				) < rayon ||
-				Math.abs(
-					ref.current.position.z - (Rack2Ref.current.position.z - 5 / 2)
-				) < rayon
-			) {
-				if (
-					(Rack2Ref.current.position.z - 5 / 2 - ref.current.position.z) ** 2 +
-						(Rack2Ref.current.position.x + 0.5 - ref.current.position.x) ** 2 <=
-					1
-				) {
-					dir *= -1;
-					ref.current.position.x += speed * dir;
-					incrz = -Math.abs(
-						Rack2Ref.current.position.z - ref.current.position.z
-					);
-					ref.current.position.z += speed * incrz;
-				} else if (
-					(Rack2Ref.current.position.z + 5 / 2 - ref.current.position.z) ** 2 +
-						(Rack2Ref.current.position.x + 0.5 - ref.current.position.x) ** 2 <=
-					1
-				) {
-					dir *= -1;
-					ref.current.position.x += speed * dir;
-					incrz = Math.abs(
-						ref.current.position.z - Rack2Ref.current.position.z
-					);
-					ref.current.position.z += speed * incrz;
-					// incrz = 0.5 * ref.current.position.x * (2 / 5);
-					// ref.current.position.z += speed * incrz;
-				} else {
-					ref.current.position.x += speed * dir;
-					ref.current.position.z += speed * incrz;
-				}
-				// dir *= -1;
-				// ref.current.position.x += speed * dir;
-			} else {
-				ref.current.position.x += speed * dir;
-				ref.current.position.z += speed * incrz;
-			}
-		} else if (ref.current.position.x - rayon - 0.5 - 0.0001 < -15) {
-			if (
-				ref.current.position.z <= Rack1Ref.current.position.z + 5 / 2 &&
-				ref.current.position.z >= Rack1Ref.current.position.z
-			) {
-				dir *= -1;
-				ref.current.position.x += speed * dir;
-				incrz = Math.abs(ref.current.position.z - Rack1Ref.current.position.z);
-				ref.current.position.z += speed * incrz;
-			} else if (
-				ref.current.position.z >= Rack1Ref.current.position.z - 5 / 2 &&
-				ref.current.position.z < Rack1Ref.current.position.z
-			) {
-				dir *= -1;
-				ref.current.position.x += speed * dir;
-				incrz = -Math.abs(Rack1Ref.current.position.z - ref.current.position.z);
-				ref.current.position.z += speed * incrz;
-			} else if (
-				Math.abs(
-					ref.current.position.z - (Rack1Ref.current.position.z + 5 / 2)
-				) < rayon ||
-				Math.abs(
-					ref.current.position.z - (Rack1Ref.current.position.z - 5 / 2)
-				) < rayon
-			) {
-				if (
-					(Rack1Ref.current.position.z - 5 / 2 - ref.current.position.z) ** 2 +
-						(Rack1Ref.current.position.x + 0.5 - ref.current.position.x) ** 2 <=
-					1
-				) {
-					dir *= -1;
-					ref.current.position.x += speed * dir;
-					incrz = -Math.abs(
-						Rack1Ref.current.position.z - ref.current.position.z
-					);
-					ref.current.position.z += speed * incrz;
-				} else if (
-					(Rack1Ref.current.position.z + 5 / 2 - ref.current.position.z) ** 2 +
-						(Rack1Ref.current.position.x + 0.5 - ref.current.position.x) ** 2 <=
-					1
-				) {
-					dir *= -1;
-					ref.current.position.x += speed * dir;
-					incrz = Math.abs(
-						ref.current.position.z - Rack1Ref.current.position.z
-					);
-					ref.current.position.z += speed * incrz;
-					// incrz = 0.5 * ref.current.position.x * (2 / 5);
-					// ref.current.position.z += speed * incrz;
-				} else {
-					ref.current.position.x += speed * dir;
-					ref.current.position.z += speed * incrz;
-				}
-				// dir *= -1;
-				// ref.current.position.x += speed * dir;
-			} else {
-				ref.current.position.x += speed * dir;
-				ref.current.position.z += speed * incrz;
-			}
-		} else {
-			ref.current.position.x += speed * dir;
-			ref.current.position.z += speed * incrz;
+			return;
 		}
+		setBallX(ref.current.position.x);
+		setBallZ(ref.current.position.z);
+		if (BallX + rayon + 0.1 >= 17 || BallX - rayon - 0.1 <= -17) {
+			setdir(dir * -1);
+			setincrz(0);
+			setBallX(0);
+			setBallZ(0);
+		} else if (
+			BallZ - rayon - 0.25 < -10 ||
+			BallZ + rayon + 0.25 > 10
+		) {
+			setBallZ(BallZ + -incrz * speed * delta);
+			setBallX(BallX + speed * dir * delta);
+			setincrz(-1 * incrz);
+		} else if (BallX + rayon + 0.5 - 0.0001 > 15) {
+			HitRack(
+				Rack2Ref,
+				BallX,
+				setBallX,
+				BallZ,
+				setBallZ,
+				incrz,
+				setincrz,
+				dir,
+				setdir,
+				delta
+			);
+		} else if (BallX - rayon - 0.5 - 0.0001 < -15) {
+			HitRack(
+				Rack1Ref,
+				BallX,
+				setBallX,
+				BallZ,
+				setBallZ,
+				incrz,
+				setincrz,
+				dir,
+				setdir,
+				delta
+			);
+		} else {
+			setBallX(BallX + speed * dir * delta);
+			setBallZ(BallZ + speed * incrz * delta);
+		}
+		ref.current.position.x = BallX;
+		ref.current.position.z = BallZ;
 	});
 	return (
 		<mesh
@@ -234,12 +196,12 @@ function Racket({
 		if (!ref.current) return;
 		if (
 			((move === 1 && keyMap.KeyW) || (move === 2 && keyMap.KeyO)) &&
-			ref.current.position.z > -5
+			ref.current.position.z > -7.1
 		) {
 			ref.current.position.z -= 10 * delta;
 		} else if (
 			((move === 1 && keyMap.KeyS) || (move === 2 && keyMap.KeyL)) &&
-			ref.current.position.z < 5
+			ref.current.position.z < 7.1
 		) {
 			ref.current.position.z += 10 * delta;
 		}
@@ -257,15 +219,10 @@ function Racket({
 }
 
 function Validate({
-	GameMode,
 	setGameMode,
 }: {
-	GameMode: number;
 	setGameMode: Dispatch<React.SetStateAction<number>>;
 }) {
-	if (GameMode === 0 || GameMode === 2 || GameMode === 3) {
-		return <mesh />;
-	}
 	return (
 		<Html position={[-15, 5, 0]}>
 			<button
@@ -278,33 +235,6 @@ function Validate({
 	);
 }
 
-// function printscreen({ i }: { i: number }) {
-// 	return (
-// 		<Html position={[0, 5, 0]}>
-// 			<p>{i}</p>
-// 		</Html>
-// 	);
-// }
-
-// function Countdown({
-// 	GameMode,
-// 	setGameMode,
-// }: {
-// 	GameMode: number;
-// 	setGameMode: Dispatch<React.SetStateAction<number>>;
-// }) {
-// 	if (GameMode !== 3) {
-// 		return <mesh />;
-// 	}
-// 	for (let i = 3; i >= 1; i -= 1) {
-// 		setTimeout(() => {
-// 			printscreen({ i });
-// 			setGameMode(2);
-// 		}, 4000);
-// 	}
-// 	return <mesh />;
-// }
-
 export default function Game() {
 	const BallRef = useRef<THREE.Mesh>(null);
 	const Rack1Ref = useRef<THREE.Mesh>(null);
@@ -315,7 +245,7 @@ export default function Game() {
 		if (GameMode === 0) {
 			setTimeout(() => {
 				setGameMode(1);
-			}, 8500);
+			}, 6000);
 		}
 	}, [GameMode]);
 	return (
@@ -324,14 +254,7 @@ export default function Game() {
 			castShadow
 			receiveShadow
 		>
-			<Validate
-				GameMode={GameMode}
-				setGameMode={setGameMode}
-			/>
-			{/* <Countdown
-				GameMode={GameMode}
-				setGameMode={setGameMode}
-			/> */}
+			{GameMode === 1 && <Validate setGameMode={setGameMode} />}
 			<Frame />
 			<Racket
 				RackRef={Rack1Ref}

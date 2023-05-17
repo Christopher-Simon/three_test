@@ -1,0 +1,7 @@
+{
+  "devDependencies": {
+    "craco-plugin-scoped-css": "^1.1.1",
+    "sass": "^1.62.1",
+    "webpack": "^5.82.1"
+  }
+}

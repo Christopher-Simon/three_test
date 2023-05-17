@@ -38,5 +38,7 @@ module.exports = {
         'operator-linebreak': 0,
         '@typescript-eslint/comma-dangle': 0,
         '@typescript-eslint/no-explicit-any': 0,
+		'react/no-unescaped-entities': 0,
+
     }
 }
