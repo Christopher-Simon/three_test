@@ -13,7 +13,7 @@ function Button({ children, format }:{ children: string, format: string }) {
 	return (
 		<button
 			type="button"
-			// className={`button ${format}`}
+			className={`button ${format}`}
 		>
 			{children}
 		</button>
