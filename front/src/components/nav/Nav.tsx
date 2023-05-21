@@ -1,10 +1,11 @@
 // import React from "react";
 import Button from "../button/Button";
+import "./Nav.css";
 
 export default function Nav() {
 	return (
-		<nav>
-			<div>
+		<nav className="Header">
+			<div className="Headerleft">
 				<img alt="img" />
 				<h1>Ronan Garros</h1>
 			</div>

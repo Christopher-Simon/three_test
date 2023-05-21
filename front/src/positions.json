@@ -1,0 +1,74 @@
+[
+	{
+		"camera" : 0,
+		"rotation" : false,
+		"pan" : true,
+		"position" : [-0.5, 15, 15],
+		"target" : [0, 0, 0],
+		"minpolar" : 0,
+		"maxpolar" : 180,
+		"enabled" : true
+	},
+	{
+		"camera" : 1,
+		"rotation" : false,
+		"pan" : false,
+		"maxdistance" : 22,
+		"position" : [-0.5, 15, 15],
+		"target" : [0, 0, 0],
+		"minpolar" : 10,
+		"maxpolar" : 70,
+		"enabled" : true
+	},
+	{
+		"camera" : 2,
+		"rotation" : false,
+		"pan" : false,
+		"position" : [50, 1, 0],
+		"target" : [0, 1, 0],
+		"minpolar" : 0,
+		"maxpolar" : 180,
+		"enabled" : true
+	},
+	{
+		"camera" : 3,
+		"rotation" : false,
+		"pan" : false,
+		"position" : [-10, 1, 0],
+		"target" : [0, 1, 0],
+		"minpolar" : 0,
+		"maxpolar" : 180,
+		"enabled" : true
+	},
+	{
+		"camera" : 4,
+		"rotation" : false,
+		"pan" : false,
+		"position" : [55, 55, -55],
+		"target" : [0, 0, 0],
+		"minpolar" : 0,
+		"maxpolar" : 180,
+		"enabled" : true
+	},
+	{
+		"camera" : 5,
+		"rotation" : false,
+		"pan" : false,
+		"position" : [-30, 25,0],
+		"target" : [0, 0, 0],
+		"minpolar" : 0,
+		"maxpolar" : 60,
+		"enabled" : true,
+		"maxdistance" : 42
+	},
+	{
+		"camera" : 6,
+		"rotation" : false,
+		"pan" : false,
+		"position" : [-15, 2,0],
+		"target" : [0, 1, 0],
+		"minpolar" : 0,
+		"maxpolar" : 180,
+		"enabled" : false
+	}
+]

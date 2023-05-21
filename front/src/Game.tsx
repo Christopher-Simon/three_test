@@ -1,7 +1,8 @@
 import { useFrame } from "@react-three/fiber";
 import { Html, Sphere } from "@react-three/drei";
-import { useEffect, useRef, useState, Dispatch } from "react";
+import { useEffect, useRef, useState, Dispatch, RefObject } from "react";
 import { BufferGeometry, Material, Mesh } from "three";
+import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import Frame from "./GameBoard";
 
 function useKeyboard() {
@@ -111,8 +112,7 @@ function Ball({
 			!ref.current ||
 			!Rack1Ref.current ||
 			!Rack2Ref.current ||
-			GameMode === 0 ||
-			GameMode === 1
+			GameMode !== 3
 		) {
 			return;
 		}
@@ -183,16 +183,20 @@ function Racket({
 	RackRef,
 	position,
 	move,
+	orbitRef,
+	orb,
 }: {
 	RackRef: React.RefObject<Mesh<BufferGeometry, Material | Material[]>>;
 	position: [number, number, number];
 	move: number;
+	orbitRef: RefObject<OrbitControlsImpl>;
+	orb: number;
 }) {
 	const ref = RackRef;
 	const keyMap = useKeyboard();
 	const long = 5;
 
-	useFrame((_, delta) => {
+	useFrame(({camera}, delta) => {
 		if (!ref.current) return;
 		if (
 			((move === 1 && keyMap.KeyW) || (move === 2 && keyMap.KeyO)) &&
@@ -204,6 +208,9 @@ function Racket({
 			ref.current.position.z < 7.1
 		) {
 			ref.current.position.z += 10 * delta;
+		}
+		if (orb === 6 && move === 1) {
+			camera.position.z = ref.current.position.z;
 		}
 	});
 
@@ -227,7 +234,7 @@ function Validate({
 		<Html position={[-15, 5, 0]}>
 			<button
 				type="button"
-				onClick={() => setGameMode(2)}
+				onClick={() => setGameMode(3)}
 			>
 				ready?
 			</button>
@@ -235,36 +242,52 @@ function Validate({
 	);
 }
 
-export default function Game() {
+export default function Game(
+{
+	orbitRef,
+	orb,
+	GameMode,
+	setGameMode,
+} : {
+	orbitRef: RefObject<OrbitControlsImpl>;
+	orb: number;
+	GameMode: number;
+	setGameMode: Dispatch<React.SetStateAction<number>>;
+}) {
 	const BallRef = useRef<THREE.Mesh>(null);
 	const Rack1Ref = useRef<THREE.Mesh>(null);
 	const Rack2Ref = useRef<THREE.Mesh>(null);
-	const [GameMode, setGameMode] = useState<number>(0);
 
-	useEffect(() => {
-		if (GameMode === 0) {
-			setTimeout(() => {
-				setGameMode(1);
-			}, 6000);
-		}
-	}, [GameMode]);
+
+	// setGameMode(1);
+	// useEffect(() => {
+	// 	if (GameMode === 0) {
+	// 		setTimeout(() => {
+	// 			setGameMode(1);
+	// 		}, 6000);
+	// 	}
+	// }, [GameMode]);
 	return (
 		<mesh
 			position={[0, 0, 0]}
 			castShadow
 			receiveShadow
 		>
-			{GameMode === 1 && <Validate setGameMode={setGameMode} />}
+			{GameMode === 2 && <Validate setGameMode={setGameMode} />}
 			<Frame />
 			<Racket
 				RackRef={Rack1Ref}
 				position={[-15, 2, 0]}
 				move={1}
+				orbitRef={orbitRef}
+				orb={orb}
 			/>
 			<Racket
 				RackRef={Rack2Ref}
 				position={[15, 2, 0]}
 				move={2}
+				orbitRef={orbitRef}
+				orb={orb}
 			/>
 			<Ball
 				BallRef={BallRef}

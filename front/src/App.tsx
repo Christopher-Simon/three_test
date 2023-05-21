@@ -1,36 +1,26 @@
 import React, { RefObject, useRef, useState, Dispatch, useEffect } from "react";
-import {
-	// BasicShadowMap,
-	// MeshBasicMaterial,
-	// MeshNormalMaterial,
-	// MeshPhongMaterial,
-	// MeshStandardMaterial,
-	// TextureLoader,
-	Vector3,
-} from "three";
+import { Vector3 } from "three";
 import * as THREE from "three";
-import { Canvas, useFrame, useLoader } from "@react-three/fiber";
-import { OrbitControls, Stats } from "@react-three/drei";
-import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader";
-import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
-// import { useNavigate } from "react-router-dom";
-// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { Canvas, useFrame } from "@react-three/fiber";
+import { Stats } from "@react-three/drei";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
-// import Polyhedron from "./game/Polyhedron";
-// import Lights from "./game/Lights";
 import {
 	BrowserRouter,
-	// Navigate,
 	Route,
-	// Router,
 	Routes,
 	useLocation,
 } from "react-router-dom";
 import Annotation from "./Annotation";
 import Profile from "./Profile";
-import Buttons from "./Buttons";
 import Game from "./Game";
-import Container from "./Container";
+import Camera from "./Camera";
+import Stade from "./Stade";
+import Chat from "./Chat";
+import Nav from "./components/nav/Nav";
+import GameMenu from "./GameMenu";
+import Bottom from "./components/bottom/Bottom";
+import positions from "./positions.json";
+import "./App.css";
 
 function Light() {
 	const light = new THREE.DirectionalLight(0xffffff, 1);
@@ -57,7 +47,6 @@ function Floor() {
 			position={[0, 0, 0]}
 		>
 			<circleGeometry args={[150, 100, 100]} />
-			{/* <planeGeometry args={[2500, 1500]} /> */}
 			<meshStandardMaterial />
 		</mesh>
 	);
@@ -66,62 +55,72 @@ function Floor() {
 function Animate({
 	lerping,
 	orbitRef,
-	setBoard,
 	setLerping,
 	setMode,
+	setTransition,
+	mode,
+	setOrb,
 }: {
 	lerping: number;
-	setBoard: Dispatch<React.SetStateAction<boolean>>;
 	orbitRef: RefObject<OrbitControlsImpl>;
 	setLerping: Dispatch<React.SetStateAction<number>>;
 	setMode: Dispatch<React.SetStateAction<number>>;
+	setTransition: Dispatch<React.SetStateAction<boolean>>;
+	setOrb: Dispatch<React.SetStateAction<number>>;
+	mode: number;
 }) {
-	let peoplepos: [number, number, number] = [0, 0, 0];
-	let peopleview: [number, number, number] = [0, 0, 0];
-	if (lerping === 2) {
-		peoplepos = [50, 1, 0];
-		peopleview = [0, 1, 0];
-	} else if (lerping === 1) {
-		peoplepos = [0, 15, 15];
-		peopleview = [0, 0, 0];
-	} else if (lerping === 3) {
-		peoplepos = [-10, 1, 0];
-		peopleview = [0, 1, 0];
-	} else if (lerping === 4) {
-		peoplepos = [55, 55, -55];
-		peopleview = [0, 0, 0];
-	}
-	const handleClick = () => {
-		setTimeout(() => {
-			setMode(0);
-			setLerping(0);
-		}, 2000);
-	};
+	let look = new Vector3(0, 0, 0);
+	let vec = new Vector3(0, 0, 0);
+	const [frame, setFrame] = useState<number>(0);
 	return useFrame(({ camera }, delta) => {
 		if (lerping === 0) return;
-		const look = new Vector3(peopleview[0], peopleview[1], peopleview[2]);
-		orbitRef.current?.target.lerp(look, delta);
-		const vec = new Vector3(peoplepos[0], peoplepos[1], peoplepos[2]);
-		camera.position.lerp(vec, delta * 1.5);
-		setBoard(true);
-		setMode(lerping);
-		if (lerping === 4) {
-			handleClick();
-		}
-
-		// 	clearTimeout(timeoutId);
-		// }
-		// useEffect(() => {
-		// 	const timer = setTimeout(() => {
-		// 	  console.log('Timeout called!');
-		// 	}, 1000);
-		// 	return () => clearTimeout(timer);
-		// }, []);
+		positions.map((pos) => {
+			if (pos.camera == lerping) {
+				look.x = pos.target[0];
+				look.y = pos.target[1];
+				look.z = pos.target[2];
+				vec.x = pos.position[0];
+				vec.y = pos.position[1];
+				vec.z = pos.position[2];
+				if (mode === 1 && (lerping === 1 || lerping == 5 || lerping == 6))
+				{
+					orbitRef.current?.target.lerp(look, 1);
+					camera.position.lerp(vec, 1);
+					setOrb(lerping);
+					setLerping(0);
+					return;
+				}
+				setTransition(true);
+				orbitRef.current?.target.lerp(look, delta * 1);
+				camera.position.lerp(vec, delta * 1);
+				if (frame < 10) setFrame(frame + 1);
+				else {
+					setFrame(0);
+					if (lerping === 4 && camera.position.distanceTo(vec) < 10) {
+						setMode(0);
+						setOrb(0);
+						setLerping(0);
+						setTransition(false);
+					} else if (lerping !== 0 && camera.position.distanceTo(vec) < 1) {
+						setMode(lerping);
+						setOrb(lerping);
+						setTransition(false);
+						setLerping(0);
+					}
+				}
+			}
+		});
 	});
 }
 
 function Element1() {
 	const [lerping, setLerping] = useState<number>(0);
+	const [mode, setMode] = useState<number>(0);
+	const [orb, setOrb] = useState<number>(0);
+	const [transition, setTransition] = useState<boolean>(true);
+	const orbitRef = useRef<OrbitControlsImpl>(null);
+	const [GameMode, setGameMode] = useState<number>(1);
+
 	const location = useLocation();
 	useEffect(() => {
 		console.log("location ", location);
@@ -131,59 +130,47 @@ function Element1() {
 		else if (location.hash === "#game") setLerping(1);
 		else setLerping(4);
 	}, [location]);
-	const materials = useLoader(MTLLoader, "../public/stade.mtl");
-	const stade = useLoader(OBJLoader, "stade.obj", (object) => {
-		object.setMaterials(materials);
-		console.log(object);
-	});
 
 	const [board, setboard] = useState<boolean>(false);
-	const [mode, setMode] = useState<number>(0);
-	// 0 = accueil
-	// 1 = jeu
-	// 2 = autre
-	const orbitRef = useRef<OrbitControlsImpl>(null);
+
 	return (
 		<>
+			<div className="Header">
+				<Nav />
+			</div>
 			<Canvas
-				// ref={canvasRef}
-				// frameloop="demand"
 				shadows
 				camera={{ position: [55, 55, -55] }}
+				className="canvas"
 				onPointerDown={() => {
+					if (transition === true) return;
 					setLerping(0);
 				}}
 				onWheel={() => {
+					if (transition === true) return;
 					setLerping(0);
 				}}
 			>
-				{mode === 0 && <Annotation setLerping={setLerping} />}
+				{mode === 0 && <Annotation />}
 				<ambientLight intensity={0.5} />
 				<boxGeometry />
 				<Light />
-				<mesh
-					receiveShadow
-					castShadow
-				>
-					<primitive
-						object={stade}
-						scale={1}
-						position={[0, 0, 0]}
-						rotation={[0, Math.PI / 2, 0]}
-						children-0-castShadow
-						children-0-receiveShadow
-						// map={materials}
-					/>
-				</mesh>
-				{mode === 1 && <Game />}
-				<OrbitControls ref={orbitRef} />
+				<Stade />
+				<Camera
+					ref={orbitRef}
+					mode={mode}
+					transition={transition}
+					orb={orb}
+				/>
+				{mode === 1 && <Game orbitRef={orbitRef} orb={orb} GameMode={GameMode} setGameMode={setGameMode}/>}
 				<Animate
 					lerping={lerping}
 					orbitRef={orbitRef}
-					setBoard={setboard}
 					setLerping={setLerping}
 					setMode={setMode}
-					// canvasRef={canvasRef}
+					setTransition={setTransition}
+					mode={mode}
+					setOrb={setOrb}
 				/>
 				<Floor />
 				<Profile Board={board} />
@@ -201,12 +188,15 @@ function Element1() {
 				</mesh>
 				<Stats />
 			</Canvas>
-			<Buttons
-				mode={mode}
-				setLerping={setLerping}
-				// setMode={setMode}
-			/>
-			<Container />
+			<div className="GameMenu">
+				{mode === 1 && <GameMenu GameMode={GameMode} setGameMode={setGameMode}/>}
+			</div>
+			<div className="Bottom">
+				<Bottom mode={mode} setLerping={setLerping} transition={transition}/>
+			</div>
+			<div className="Chat">
+				<Chat />
+			</div>
 		</>
 	);
 }
@@ -217,7 +207,7 @@ function App() {
 			<Routes>
 				<Route
 					path="*"
-					element={<Container />}
+					element={<Element1 />}
 				/>
 			</Routes>
 		</BrowserRouter>

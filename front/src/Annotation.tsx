@@ -1,20 +1,20 @@
 import React, { Dispatch } from "react";
 // import annotation from "./annotation.json";
 import { Html } from "@react-three/drei";
-import annotations from "./annotation.json";
+import annotations from "./annotations.json";
 import "./Annotation.css";
 // import { Vector3 } from "@react-three/fiber";
 // import { Peoplecamtype } from "./App" ;
 
-interface AnnotationProps {
-	setLerping: Dispatch<React.SetStateAction<number>>;
-}
+// interface AnnotationProps {
+// 	setMode: Dispatch<React.SetStateAction<number>>;
+// }
 
-export default function Annotation({ setLerping }: AnnotationProps) {
-	// useFrame((_, delta) =>
+export default function Annotation() {
+
 	const handleClick = (title: string, i: number) => {
 		document.location = `http://localhost:3000/#${title}`;
-		setLerping(i + 1);
+		// setMode(i + 1);
 		console.log(i + 1);
 		console.log(title);
 	};
