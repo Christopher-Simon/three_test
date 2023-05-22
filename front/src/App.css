@@ -23,7 +23,8 @@
 
 .GameMenu {
 	position: absolute;
-	top: 50%;
-	left: 45%;
+	top: 25%;
+	/* left: 25%; */
+	width: 100%;
 	z-index: 10;
 }

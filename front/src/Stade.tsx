@@ -3,7 +3,6 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader";
 import { useLoader } from "@react-three/fiber";
 
 function Stade() {
-
 	const materials = useLoader(MTLLoader, "./src/stade.mtl");
 	const stade = useLoader(OBJLoader, "./src/stade.obj", (object) => {
 		object.setMaterials(materials);
@@ -11,10 +10,7 @@ function Stade() {
 	});
 
 	return (
-		<mesh
-		receiveShadow
-		castShadow
-		>
+		<mesh receiveShadow castShadow>
 			<primitive
 				object={stade}
 				scale={1}

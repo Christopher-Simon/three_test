@@ -1,4 +1,4 @@
-import React, { Dispatch } from "react";
+import React from "react";
 // import annotation from "./annotation.json";
 import { Html } from "@react-three/drei";
 import annotations from "./annotations.json";
@@ -11,7 +11,6 @@ import "./Annotation.css";
 // }
 
 export default function Annotation() {
-
 	const handleClick = (title: string, i: number) => {
 		document.location = `http://localhost:3000/#${title}`;
 		// setMode(i + 1);
@@ -21,10 +20,7 @@ export default function Annotation() {
 	return (
 		<>
 			{annotations.map((a, i) => (
-				<Html
-					key={1}
-					position={[a.lookAt.x, a.lookAt.y, a.lookAt.z]}
-				>
+				<Html key={1} position={[a.lookAt.x, a.lookAt.y, a.lookAt.z]}>
 					<div className="button_all">
 						<svg
 							height="34"

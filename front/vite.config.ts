@@ -12,6 +12,6 @@ export default defineConfig({
   plugins: [
     react(),
     vitePluginCheck({typescript: true,}),
-    // eslint()
+    eslint()
   ],
 })

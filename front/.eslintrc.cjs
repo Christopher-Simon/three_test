@@ -39,6 +39,8 @@ module.exports = {
         '@typescript-eslint/comma-dangle': 0,
         '@typescript-eslint/no-explicit-any': 0,
 		'react/no-unescaped-entities': 0,
-
+		"object-shorthand": 0,
+		"no-param-reassign": ["error", { "props": false }],
+		"prefer-destructuring": ["error", {"object": true, "array": false}],
     }
 }

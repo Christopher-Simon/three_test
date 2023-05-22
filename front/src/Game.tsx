@@ -91,13 +91,14 @@ function Ball({
 	Rack1Ref,
 	Rack2Ref,
 	GameMode,
+	setGameMode,
 }: // setGameMode,
 {
 	BallRef: React.RefObject<Mesh<BufferGeometry, Material | Material[]>>;
 	Rack1Ref: React.RefObject<Mesh<BufferGeometry, Material | Material[]>>;
 	Rack2Ref: React.RefObject<Mesh<BufferGeometry, Material | Material[]>>;
 	GameMode: number;
-	// setGameMode: Dispatch<React.SetStateAction<number>>;
+	setGameMode: Dispatch<React.SetStateAction<number>>;
 }) {
 	const ref = BallRef;
 	const [dir, setdir] = useState<number>(1);
@@ -112,7 +113,7 @@ function Ball({
 			!ref.current ||
 			!Rack1Ref.current ||
 			!Rack2Ref.current ||
-			GameMode !== 3
+			GameMode !== 4
 		) {
 			return;
 		}
@@ -123,10 +124,8 @@ function Ball({
 			setincrz(0);
 			setBallX(0);
 			setBallZ(0);
-		} else if (
-			BallZ - rayon - 0.25 < -10 ||
-			BallZ + rayon + 0.25 > 10
-		) {
+			setGameMode(3);
+		} else if (BallZ - rayon - 0.25 < -10 || BallZ + rayon + 0.25 > 10) {
 			setBallZ(BallZ + -incrz * speed * delta);
 			setBallX(BallX + speed * dir * delta);
 			setincrz(-1 * incrz);
@@ -170,11 +169,7 @@ function Ball({
 			receiveShadow
 			castShadow
 		>
-			<Sphere
-				args={[rayon, 30, 30]}
-				receiveShadow
-				castShadow
-			/>
+			<Sphere args={[rayon, 30, 30]} receiveShadow castShadow />
 		</mesh>
 	);
 }
@@ -183,20 +178,20 @@ function Racket({
 	RackRef,
 	position,
 	move,
-	orbitRef,
 	orb,
+	BallRef,
 }: {
 	RackRef: React.RefObject<Mesh<BufferGeometry, Material | Material[]>>;
 	position: [number, number, number];
 	move: number;
-	orbitRef: RefObject<OrbitControlsImpl>;
 	orb: number;
+	BallRef: React.RefObject<Mesh<BufferGeometry, Material | Material[]>>;
 }) {
 	const ref = RackRef;
 	const keyMap = useKeyboard();
 	const long = 5;
 
-	useFrame(({camera}, delta) => {
+	useFrame(({ camera }, delta) => {
 		if (!ref.current) return;
 		if (
 			((move === 1 && keyMap.KeyW) || (move === 2 && keyMap.KeyO)) &&
@@ -208,6 +203,11 @@ function Racket({
 			ref.current.position.z < 7.1
 		) {
 			ref.current.position.z += 10 * delta;
+		} else if (move === 3 && BallRef.current) {
+			ref.current.position.z =
+				BallRef.current.position.z <= 0
+					? Math.max(BallRef.current.position.z, -7.1)
+					: Math.min(BallRef.current.position.z, 7.1);
 		}
 		if (orb === 6 && move === 1) {
 			camera.position.z = ref.current.position.z;
@@ -215,10 +215,7 @@ function Racket({
 	});
 
 	return (
-		<mesh
-			ref={ref}
-			position={[position[0], position[1], position[2]]}
-		>
+		<mesh ref={ref} position={[position[0], position[1], position[2]]}>
 			<boxGeometry args={[1, 1, long]} />
 			<meshBasicMaterial color="red" />
 		</mesh>
@@ -232,69 +229,58 @@ function Validate({
 }) {
 	return (
 		<Html position={[-15, 5, 0]}>
-			<button
-				type="button"
-				onClick={() => setGameMode(3)}
-			>
+			<button type="button" onClick={() => setGameMode(3)}>
 				ready?
 			</button>
 		</Html>
 	);
 }
 
-export default function Game(
-{
+export default function Game({
 	orbitRef,
 	orb,
 	GameMode,
 	setGameMode,
-} : {
+	opponent,
+}: {
 	orbitRef: RefObject<OrbitControlsImpl>;
 	orb: number;
 	GameMode: number;
 	setGameMode: Dispatch<React.SetStateAction<number>>;
+	opponent: string;
 }) {
 	const BallRef = useRef<THREE.Mesh>(null);
 	const Rack1Ref = useRef<THREE.Mesh>(null);
 	const Rack2Ref = useRef<THREE.Mesh>(null);
 
-
-	// setGameMode(1);
 	// useEffect(() => {
-	// 	if (GameMode === 0) {
-	// 		setTimeout(() => {
-	// 			setGameMode(1);
-	// 		}, 6000);
-	// 	}
-	// }, [GameMode]);
+	// 	if (GameMode > 1) setGameMode(0);
+	// }, [document.location]);
+
 	return (
-		<mesh
-			position={[0, 0, 0]}
-			castShadow
-			receiveShadow
-		>
+		<mesh position={[0, 0, 0]} castShadow receiveShadow>
 			{GameMode === 2 && <Validate setGameMode={setGameMode} />}
 			<Frame />
 			<Racket
 				RackRef={Rack1Ref}
 				position={[-15, 2, 0]}
 				move={1}
-				orbitRef={orbitRef}
 				orb={orb}
+				BallRef={BallRef}
 			/>
 			<Racket
 				RackRef={Rack2Ref}
 				position={[15, 2, 0]}
-				move={2}
-				orbitRef={orbitRef}
+				move={opponent === "" ? 3 : 2}
 				orb={orb}
+				BallRef={BallRef}
 			/>
 			<Ball
 				BallRef={BallRef}
 				Rack1Ref={Rack1Ref}
 				Rack2Ref={Rack2Ref}
 				GameMode={GameMode}
-				// setGameMode={setGameMode}
+				setGameMode={setGameMode}
 			/>
 		</mesh>
 	);

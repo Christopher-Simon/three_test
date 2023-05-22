@@ -11,7 +11,7 @@ import {
 	useLocation,
 } from "react-router-dom";
 import Annotation from "./Annotation";
-import Profile from "./Profile";
+// import Profile from "./Profile";
 import Game from "./Game";
 import Camera from "./Camera";
 import Stade from "./Stade";
@@ -69,26 +69,25 @@ function Animate({
 	setOrb: Dispatch<React.SetStateAction<number>>;
 	mode: number;
 }) {
-	let look = new Vector3(0, 0, 0);
-	let vec = new Vector3(0, 0, 0);
+	const look = new Vector3(0, 0, 0);
+	const vec = new Vector3(0, 0, 0);
 	const [frame, setFrame] = useState<number>(0);
 	return useFrame(({ camera }, delta) => {
 		if (lerping === 0) return;
 		positions.map((pos) => {
-			if (pos.camera == lerping) {
+			if (pos.camera === lerping) {
 				look.x = pos.target[0];
 				look.y = pos.target[1];
 				look.z = pos.target[2];
 				vec.x = pos.position[0];
 				vec.y = pos.position[1];
 				vec.z = pos.position[2];
-				if (mode === 1 && (lerping === 1 || lerping == 5 || lerping == 6))
-				{
+				if (mode === 1 && (lerping === 1 || lerping === 5 || lerping === 6)) {
 					orbitRef.current?.target.lerp(look, 1);
 					camera.position.lerp(vec, 1);
 					setOrb(lerping);
 					setLerping(0);
-					return;
+					return 1;
 				}
 				setTransition(true);
 				orbitRef.current?.target.lerp(look, delta * 1);
@@ -109,6 +108,7 @@ function Animate({
 					}
 				}
 			}
+			return 1;
 		});
 	});
 }
@@ -120,6 +120,7 @@ function Element1() {
 	const [transition, setTransition] = useState<boolean>(true);
 	const orbitRef = useRef<OrbitControlsImpl>(null);
 	const [GameMode, setGameMode] = useState<number>(1);
+	const [opponent, setOpponent] = useState<string>("");
 
 	const location = useLocation();
 	useEffect(() => {
@@ -131,7 +132,7 @@ function Element1() {
 		else setLerping(4);
 	}, [location]);
 
-	const [board, setboard] = useState<boolean>(false);
+	// const [board, setboard] = useState<boolean>(false);
 
 	return (
 		<>
@@ -162,7 +163,15 @@ function Element1() {
 					transition={transition}
 					orb={orb}
 				/>
-				{mode === 1 && <Game orbitRef={orbitRef} orb={orb} GameMode={GameMode} setGameMode={setGameMode}/>}
+				{mode === 1 && (
+					<Game
+						orbitRef={orbitRef}
+						orb={orb}
+						GameMode={GameMode}
+						setGameMode={setGameMode}
+						opponent={opponent}
+					/>
+				)}
 				<Animate
 					lerping={lerping}
 					orbitRef={orbitRef}
@@ -173,7 +182,7 @@ function Element1() {
 					setOrb={setOrb}
 				/>
 				<Floor />
-				<Profile Board={board} />
+				{/* <Profile Board={board} /> */}
 				<axesHelper
 					args={[10]}
 					position={[0, 1.5, 0]}
@@ -189,10 +198,20 @@ function Element1() {
 				<Stats />
 			</Canvas>
 			<div className="GameMenu">
-				{mode === 1 && <GameMenu GameMode={GameMode} setGameMode={setGameMode}/>}
+				{mode === 1 && (
+					<GameMenu
+						GameMode={GameMode}
+						setGameMode={setGameMode}
+						setOpponent={setOpponent}
+					/>
+				)}
 			</div>
 			<div className="Bottom">
-				<Bottom mode={mode} setLerping={setLerping} transition={transition}/>
+				<Bottom
+					mode={mode}
+					setLerping={setLerping}
+					transition={transition}
+				/>
 			</div>
 			<div className="Chat">
 				<Chat />
