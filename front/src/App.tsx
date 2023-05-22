@@ -2,7 +2,7 @@ import React, { RefObject, useRef, useState, Dispatch, useEffect } from "react";
 import { Vector3 } from "three";
 import * as THREE from "three";
 import { Canvas, useFrame } from "@react-three/fiber";
-import { Stats } from "@react-three/drei";
+import { Stats, Sky } from "@react-three/drei";
 import { OrbitControls as OrbitControlsImpl } from "three-stdlib";
 import {
 	BrowserRouter,
@@ -153,7 +153,8 @@ function Element1() {
 				}}
 			>
 				{mode === 0 && <Annotation />}
-				<ambientLight intensity={0.5} />
+				<ambientLight intensity={0.1} />
+				<Sky distance={450} sunPosition={[100, 100, 0]} inclination={1000} azimuth={0.25} />
 				<boxGeometry />
 				<Light />
 				<Stade />
